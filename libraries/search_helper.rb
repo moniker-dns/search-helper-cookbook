@@ -36,6 +36,28 @@ module SearchHelper
     end
   end
 
+  def search2(type, query, override, &block)
+    # TODO: Find a better name for this method search2 is.. awful..
+    if Chef::Config[:solo] and override.nil?
+      Chef::Application.fatal!("You must supply an override with chef-solo")
+    elsif override.nil?
+      # Perform a search
+      results = search(type, query)
+
+      if results.empty?
+        Chef::Application.fatal!("Search was unable to find any results.")
+      else
+        results.map! do |member|
+          yield member
+        end
+
+        return results
+      end
+    else
+      return override
+    end
+  end
+
   protected
 
   def select_best_ip(other_node)

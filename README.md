@@ -7,3 +7,9 @@ rabbitmq_hosts = search_best_ip(node[:rabbitmq_search], node[:rabbitmq_hosts]) d
   "#{ip}:#{other_node[:rabbitmq][:port]}"
 end
 ~~~
+
+~~~
+sysadmins = search2(:users, node[:sysadmin_search], node[:sysadmins]) do |user|
+  "#{user['id']}"
+end
+~~~

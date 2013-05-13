@@ -76,9 +76,9 @@ module SearchHelper
     if node.attribute?('area') and other_node.attribute?('area')
       # HP Specific "Best" - Cloud 1.0 Specific
       if node['area'] == other_node['area'] and node['az'] == other_node['az']
-        return member['meta_data']['private_ipv4']
+        return other_node['meta_data']['private_ipv4']
       else
-        return member['meta_data']['public_ipv4']
+        return other_node['meta_data']['public_ipv4']
       end
     end
 

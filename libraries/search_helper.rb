@@ -100,5 +100,9 @@ module SearchHelper
 end
 
 class Chef::Recipe
-    include SearchHelper
+  include SearchHelper
+end
+
+class Chef::Node
+  include SearchHelper
 end

@@ -36,16 +36,23 @@ module SearchHelper
     end
   end
 
-  def search_helper(type, query, override=nil, &block)
+  def search_helper(type, query, override=nil, required=true, &block)
+    Chef::Log.debug("Preparing to search using query: #{query}")
+
     if Chef::Config[:solo] and override.nil?
       Chef::Application.fatal!("You must supply an override with chef-solo")
     elsif override.nil?
       # Perform a search
       results = search(type, query)
 
-      if results.empty?
+      if results.empty? and required
         Chef::Application.fatal!("Search was unable to find any results.")
+      elsif results.empty?
+        Chef::Log.info("Search found no results")
+        return []
       else
+        Chef::Log.info("Search found #{results.length} results")
+
         results.map! do |result|
           yield result
         end
@@ -53,6 +60,8 @@ module SearchHelper
         return results
       end
     else
+      Chef::Log.info("Search skipped. Using override value.")
+
       return override
     end
   end

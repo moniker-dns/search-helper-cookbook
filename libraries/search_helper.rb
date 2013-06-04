@@ -15,16 +15,23 @@
 # under the License.
 
 module SearchHelper
-  def search_helper_best_ip(query, override=nil, &block)
+  def search_helper_best_ip(query, override=nil, required=true, &block)
+    Chef::Log.debug("Preparing to search using query: #{query}")
+
     if Chef::Config[:solo] and override.nil?
       Chef::Application.fatal!("You must supply an override with chef-solo")
     elsif override.nil?
       # Perform a search
       nodes = search(:node, query)
 
-      if nodes.empty?
+      if nodes.empty? and required
         Chef::Application.fatal!("Search was unable to find any nodes.")
+      elsif nodes.empty?
+        Chef::Log.info("Search found no nodes")
+        return []
       else
+        Chef::Log.info("Search found #{nodes.length} nodes")
+
         nodes.map! do |member|
           yield select_best_ip(member), member
         end
@@ -32,17 +39,18 @@ module SearchHelper
         return nodes
       end
     else
+      Chef::Log.info("Search skipped. Using override value.")
+
       return override
     end
   end
 
   def search_helper(type, query, override=nil, required=true, &block)
-    Chef::Log.debug("Preparing to search using query: #{query}")
+    Chef::Log.debug("Preparing to search #{type} using query: #{query}")
 
     if Chef::Config[:solo] and override.nil?
       Chef::Application.fatal!("You must supply an override with chef-solo")
     elsif override.nil?
-      # Perform a search
       results = search(type, query)
 
       if results.empty? and required
@@ -53,8 +61,10 @@ module SearchHelper
       else
         Chef::Log.info("Search found #{results.length} results")
 
-        results.map! do |result|
-          yield result
+        if block
+          results.map! do |result|
+            yield result
+          end
         end
 
         return results

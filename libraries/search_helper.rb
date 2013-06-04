@@ -61,10 +61,8 @@ module SearchHelper
       else
         Chef::Log.info("Search found #{results.length} results")
 
-        if block
-          results.map! do |result|
-            yield result
-          end
+        results.map! do |result|
+          yield result
         end
 
         return results

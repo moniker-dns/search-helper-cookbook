@@ -19,7 +19,11 @@ module SearchHelper
     Chef::Log.debug("Preparing to search using query: #{query}")
 
     if Chef::Config[:solo] and override.nil?
-      Chef::Application.fatal!("You must supply an override with chef-solo")
+      if required
+        Chef::Application.fatal!("You must supply an override with chef-solo")
+      else
+        return []
+      end
     elsif override.nil?
       # Perform a search
       nodes = search(:node, query)
@@ -49,7 +53,11 @@ module SearchHelper
     Chef::Log.debug("Preparing to search #{type} using query: #{query}")
 
     if Chef::Config[:solo] and override.nil?
-      Chef::Application.fatal!("You must supply an override with chef-solo")
+      if required
+        Chef::Application.fatal!("You must supply an override with chef-solo")
+      else
+        return []
+      end
     elsif override.nil?
       results = search(type, query)
 

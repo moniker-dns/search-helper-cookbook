@@ -34,7 +34,7 @@ module SearchHelper
         Chef::Log.info("Search found no nodes")
         return []
       else
-        Chef::Log.info("Search found #{nodes.length} nodes")
+        Chef::Log.info("Search found #{nodes.length} nodes: #{nodes.map{|n| n[:hostname]}}")
 
         nodes.map! do |member|
           yield select_best_ip(member), member

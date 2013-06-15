@@ -16,7 +16,7 @@
 
 module SearchHelper
   def search_helper_best_ip(query, override=nil, required=true, &block)
-    Chef::Log.debug("Preparing to search using query: #{query}")
+    Chef::Log.info("Preparing to search using query: #{query}")
 
     if Chef::Config[:solo] and override.nil?
       if required
@@ -29,9 +29,9 @@ module SearchHelper
       nodes = search(:node, query)
 
       if nodes.empty? and required
-        Chef::Application.fatal!("Search was unable to find any nodes.")
+        Chef::Application.fatal!("Search was unable to find any nodes. (type=#{type}, query=#{query})")
       elsif nodes.empty?
-        Chef::Log.info("Search found no nodes")
+        Chef::Log.info("Search found no nodes (type=#{type}, query=#{query})")
         return []
       else
         Chef::Log.info("Search found #{nodes.length} nodes: #{nodes.map{|n| n[:hostname]}}")
@@ -50,7 +50,7 @@ module SearchHelper
   end
 
   def search_helper(type, query, override=nil, required=true, &block)
-    Chef::Log.debug("Preparing to search #{type} using query: #{query}")
+    Chef::Log.info("Preparing to search #{type} using query: #{query}")
 
     if Chef::Config[:solo] and override.nil?
       if required
@@ -62,12 +62,12 @@ module SearchHelper
       results = search(type, query)
 
       if results.empty? and required
-        Chef::Application.fatal!("Search was unable to find any results.")
+        Chef::Application.fatal!("Search was unable to find any results (type=#{type}, query=#{query})")
       elsif results.empty?
-        Chef::Log.info("Search found no results")
+        Chef::Log.info("Search found no results (type=#{type}, query=#{query})")
         return []
       else
-        Chef::Log.info("Search found #{results.length} results")
+        Chef::Log.info("Search found #{results.length} results (type=#{type}, query=#{query})")
 
         results.map! do |result|
           yield result

@@ -34,7 +34,11 @@ module SearchHelper
         Chef::Log.info("Search found no nodes (type=#{type}, query=#{query})")
         return []
       else
-        Chef::Log.info("Search found #{nodes.length} nodes: #{nodes.map{|n| n[:hostname]}}")
+        Chef::Log.info("Search found #{nodes.length} nodes: #{nodes.map{|n| (n[:hostname].nil? ? n.name : n[:hostname]) + ' '}}")
+
+        # remove nodes we don't have any form of IP for
+        nodes.delete_if { |member| select_best_ip(member).nil? }
+        Chef::Log.info("Search found #{nodes.length} nodes with IPs: #{nodes.map{|n| (n[:hostname].nil? ? n.name : n[:hostname]) + ' '}}")
 
         nodes.map! do |member|
           yield select_best_ip(member), member

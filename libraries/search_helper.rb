@@ -29,9 +29,9 @@ module SearchHelper
       nodes = search(:node, query)
 
       if nodes.empty? and required
-        Chef::Application.fatal!("Search was unable to find any nodes. (type=#{type}, query=#{query})")
+        Chef::Application.fatal!("Search was unable to find any nodes. (query=#{query})")
       elsif nodes.empty?
-        Chef::Log.info("Search found no nodes (type=#{type}, query=#{query})")
+        Chef::Log.info("Search found no nodes (query=#{query})")
         return []
       else
         Chef::Log.info("Search found #{nodes.length} nodes: #{nodes.map{|n| (n[:hostname].nil? ? n.name : n[:hostname]) + ' '}}")

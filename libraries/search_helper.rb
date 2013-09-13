@@ -77,6 +77,9 @@ module SearchHelper
       else
         Chef::Log.info("Search found #{results.length} results (type=#{type}, query=#{query})")
 
+        # sort results for consitent ordering (everything should have a name, but prefer the hostname
+        results.sort_by! { |e| e[:hostname].nil? ? e.name : e[:hostname] }
+
         results.map! do |result|
           yield result
         end

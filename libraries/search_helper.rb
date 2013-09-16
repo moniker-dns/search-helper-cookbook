@@ -40,7 +40,7 @@ module SearchHelper
         nodes.delete_if { |member| select_best_ip(member).nil? }
 
         # sort the nodes so that we're consistent & avoid uneeded restarts
-        nodes.sort_by! { |member| member[:hostname] }
+        nodes.sort_by! { |member| member[:hostname].nil? ? member.name : member[:hostname] }
 
         Chef::Log.info("Search found #{nodes.length} nodes with IPs: #{nodes.map{|n| (n[:hostname].nil? ? n.name : n[:hostname]) + ' '}}")
 
